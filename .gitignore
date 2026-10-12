@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project data (local only; do not push the vLLM corpus or generated outputs)
+data/raw/
+data/processed/
+data/output/
+.venv/
