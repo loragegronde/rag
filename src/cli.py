@@ -79,7 +79,6 @@ class Cli:
     ) -> None:
         """Generate answers for previously retrieved dataset results."""
         results_file: Path = self._validate_path(student_search_results_path)
-        _ = self._ensure_index(index_directory)
         save_dir: Path = self._validate_directory(save_directory, create=True)
 
         save_path = Generator().answer_dataset(results_file, save_dir)

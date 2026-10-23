@@ -1,4 +1,3 @@
-"""Answer questions from retrieved sources with a local causal LM."""
 
 from pathlib import Path
 from typing import cast
@@ -43,7 +42,6 @@ def select_device() -> torch.device:
 
 
 class Generator:
-    """Generate answers grounded in retrieved source snippets."""
 
     def __init__(
         self,
@@ -126,7 +124,6 @@ class Generator:
     def _build_context(
         self, question: str, sources: list[MinimalSource]
     ) -> str:
-        """Pack the most relevant snippets into the character budget."""
         markers = self._query_markers(question)
         scored: list[tuple[int, str]] = []
         for source in sources:
@@ -154,7 +151,6 @@ class Generator:
 
     @staticmethod
     def _query_markers(question: str) -> list[str]:
-        """Distinctive tokens (e.g. FP8_MIN) that favour definitions."""
         cleaned = question.replace("'", " ").replace('"', " ")
         return [
             token
@@ -164,7 +160,6 @@ class Generator:
 
     @staticmethod
     def _extract_text(source: MinimalSource) -> str:
-        """Read the exact snippet using the retrieved character indices."""
         start = source.first_character_index
         length = source.last_character_index - start
         try:
@@ -184,7 +179,7 @@ class Generator:
         with torch.inference_mode():
             outputs = cast(
                 torch.Tensor,
-                self.model.generate(
+                self.model.generate( 
                     **inputs,
                     max_new_tokens=self.max_new_tokens,
                     do_sample=False,
