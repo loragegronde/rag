@@ -29,11 +29,15 @@ class Cli:
     ) -> None:
         """Return the top-k sources for a query."""
         self._validate_query(query, k)
-        index_dir = self._validate_directory(index_directory, create=False)
+        index_dir = self._ensure_index(index_directory)
 
         retriever = Retriever(index_dir)
         result = retriever.search_single(query, k)
-        print(result.model_dump_json(indent=2))
+        for source in result.retrieved_sources:
+            print(
+                f"{source.file_path} ",
+                f"[{source.first_character_index}:{source.last_character_index}]",
+            )
 
     def search_dataset(
         self,
@@ -47,10 +51,12 @@ class Cli:
         self._validate_k(k)
 
         dataset_file: Path = self._validate_path(dataset_path)
-        index_dir: Path = self._validate_directory(
-            index_directory, create=False
-        )
+        index_dir: Path = self._ensure_index(index_directory)
         save_dir: Path = self._validate_directory(save_directory, create=True)
+        save_path = Retriever(index_dir).search_dataset(
+            dataset_file, save_dir, k
+        )
+        print(f"Saved student_search_results to {save_path}")
 
     def answer(
         self,
@@ -60,9 +66,7 @@ class Cli:
     ) -> None:
         """Answer a query using retrieved sources."""
         self._validate_query(query, k)
-        index_dir: Path = self._validate_directory(
-            index_directory, create=False
-        )
+        index_dir: Path = self._ensure_index(index_directory)
 
     def answer_dataset(
         self,
@@ -72,9 +76,7 @@ class Cli:
     ) -> None:
         """Generate answers for previously retrieved dataset results."""
         results_file: Path = self._validate_path(student_search_results_path)
-        index_dir: Path = self._validate_directory(
-            index_directory, create=False
-        )
+        index_dir: Path = self._ensure_index(index_directory)
         save_dir: Path = self._validate_directory(save_directory, create=True)
 
     def evaluate(
@@ -85,6 +87,13 @@ class Cli:
         """Evaluate retrieval quality using recall@k."""
         results_file: Path = self._validate_path(student_search_results_path)
         dataset_file: Path = self._validate_path(dataset_path)
+
+    def _ensure_index(self, index_directory: str) -> Path:
+        index_path = Path(index_directory)
+        if not index_path.is_dir():
+            print(f"Index not found at {index_directory}; building...")
+            self.index(index_directory=index_directory)
+        return self._validate_directory(index_directory, create=False)
 
     @staticmethod
     def _validate_directory(path: str, *, create: bool) -> Path:

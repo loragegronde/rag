@@ -1,8 +1,7 @@
 """Build a BM25 index over the local vLLM corpus."""
 
-from collections.abc import Callable
 from pathlib import Path
-from typing import cast
+from typing import Any
 
 import bm25s
 import Stemmer
@@ -15,11 +14,7 @@ from tqdm import tqdm
 ALLOWED_EXTENSIONS = {".py", ".md", ".txt", ".rst"}
 
 
-def _make_stemmer() -> Callable[[list[str]], list[str]]:
-    return cast(
-        Callable[[list[str]], list[str]],
-        Stemmer.Stemmer("english").stemWords,
-    )
+
 
 
 class Index:
@@ -33,7 +28,7 @@ class Index:
         self.max_chunk_size: int = max_chunk_size
         self.raw_dir: Path = raw_dir
         self.index_dir: Path = index_dir
-        self.stemmer: Callable[[list[str]], list[str]] = _make_stemmer()
+        self.stemmer: Any = Stemmer.Stemmer("english")
         self.chunk_overlap: int = min(max_chunk_size // 10, max_chunk_size - 1)
 
     def build(self) -> None:
