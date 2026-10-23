@@ -1,5 +1,9 @@
 PYTHON ?= python3
 UV ?= uv
+UV_PROJECT_ENVIRONMENT ?= /tmp/rag-venv
+UV_CACHE_DIR ?= /tmp/rag-uv-cache
+HF_HOME ?= /tmp/rag-hf-cache
+export UV_PROJECT_ENVIRONMENT UV_CACHE_DIR HF_HOME
 
 .PHONY: install run debug clean lint lint-strict
 
