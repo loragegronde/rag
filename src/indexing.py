@@ -14,9 +14,6 @@ from tqdm import tqdm
 ALLOWED_EXTENSIONS = {".py", ".md", ".txt", ".rst"}
 
 
-
-
-
 class Index:
 
     def __init__(

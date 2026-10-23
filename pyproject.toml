@@ -15,7 +15,15 @@ dependencies = [
     "transformers>=5.20.2",
 ]
 
+[dependency-groups]
+dev = [
+    "flake8>=7.0",
+    "mypy>=1.10",
+]
+
 [tool.pyright]
+include = ["src"]
+exclude = ["data", ".venv", "**/__pycache__"]
 reportMissingTypeStubs = false
 venvPath = "/tmp"
 venv = "rag-venv"

@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from src.retrieving import Retriever
-from src.indexing import Index
+from .generator import Generator
+from .indexing import Index
+from .retrieving import Retriever
 
 
 class Cli:
@@ -34,10 +35,9 @@ class Cli:
         retriever = Retriever(index_dir)
         result = retriever.search_single(query, k)
         for source in result.retrieved_sources:
-            print(
-                f"{source.file_path} ",
-                f"[{source.first_character_index}:{source.last_character_index}]",
-            )
+            start = source.first_character_index
+            end = source.last_character_index
+            print(f"{source.file_path} [{start}:{end}]")
 
     def search_dataset(
         self,
@@ -68,6 +68,9 @@ class Cli:
         self._validate_query(query, k)
         index_dir: Path = self._ensure_index(index_directory)
 
+        result = Retriever(index_dir).search_single(query, k)
+        print(Generator().answer(query, result.retrieved_sources))
+
     def answer_dataset(
         self,
         student_search_results_path: str,
@@ -76,8 +79,11 @@ class Cli:
     ) -> None:
         """Generate answers for previously retrieved dataset results."""
         results_file: Path = self._validate_path(student_search_results_path)
-        index_dir: Path = self._ensure_index(index_directory)
+        _ = self._ensure_index(index_directory)
         save_dir: Path = self._validate_directory(save_directory, create=True)
+
+        save_path = Generator().answer_dataset(results_file, save_dir)
+        print(f"Saved student_search_results_and_answer to {save_path}")
 
     def evaluate(
         self,
