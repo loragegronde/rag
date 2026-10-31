@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from .evaluating import evaluate_recall
 from .generator import Generator
 from .indexing import Index
 from .retrieving import Retriever
@@ -89,9 +90,10 @@ class Cli:
         student_search_results_path: str,
         dataset_path: str,
     ) -> None:
-        """Evaluate retrieval quality using recall@k."""
+        """Report recall@k against a ground-truth answered dataset."""
         results_file: Path = self._validate_path(student_search_results_path)
         dataset_file: Path = self._validate_path(dataset_path)
+        _ = evaluate_recall(results_file, dataset_file)
 
     def _ensure_index(self, index_directory: str) -> Path:
         index_path = Path(index_directory)
