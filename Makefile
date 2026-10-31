@@ -5,7 +5,6 @@ VENV_LINK := .venv
 UV_PROJECT_ENVIRONMENT := $(VENV_DIR)
 UV_CACHE_DIR ?= /tmp/rag-uv-cache
 HF_HOME ?= /tmp/rag-hf-cache
-# Optional secrets (HF_TOKEN, …) live in gitignored .env — never commit them.
 -include .env
 export UV_PROJECT_ENVIRONMENT UV_CACHE_DIR HF_HOME HF_TOKEN
 
